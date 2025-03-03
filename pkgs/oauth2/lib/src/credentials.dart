@@ -88,6 +88,18 @@ class Credentials {
   /// Whether it's possible to refresh these credentials.
   bool get canRefresh => refreshToken != null && tokenEndpoint != null;
 
+
+
+  /// Holds all data including additional data returned by the authorization
+  /// server during the token exchange.
+  ///
+  /// This may include custom fields or metadata specific to the authorization
+  /// server's implementation. For example, some servers may include a
+  /// `blacklisted_device` state or other contextual information.
+  ///
+  /// This field is optional and may be `null`.
+  final Map<dynamic, dynamic>? data;
+
   /// Creates a new set of credentials.
   ///
   /// This class is usually not constructed directly; rather, it's accessed via
@@ -114,6 +126,7 @@ class Credentials {
       this.tokenEndpoint,
       Iterable<String>? scopes,
       this.expiration,
+      this.data,
       String? delimiter,
       Map<String, dynamic> Function(MediaType? mediaType, String body)?
           getParameters})
@@ -183,6 +196,7 @@ class Credentials {
       tokenEndpoint: tokenEndpointUri,
       scopes: (scopes as List).map((scope) => scope as String),
       expiration: expirationDateTime,
+      data: parsed,
     );
   }
 
@@ -196,7 +210,8 @@ class Credentials {
         'idToken': idToken,
         'tokenEndpoint': tokenEndpoint?.toString(),
         'scopes': scopes,
-        'expiration': expiration?.millisecondsSinceEpoch
+        'expiration': expiration?.millisecondsSinceEpoch,
+        'data': data
       });
 
   /// Returns a new set of refreshed credentials.
@@ -262,6 +277,8 @@ class Credentials {
         idToken: credentials.idToken,
         tokenEndpoint: credentials.tokenEndpoint,
         scopes: credentials.scopes,
-        expiration: credentials.expiration);
+        expiration: credentials.expiration,
+        data: credentials.data
+    );
   }
 }

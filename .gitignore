@@ -2,3 +2,5 @@
 .dart_tool
 pubspec.lock
 _site/
+/pkgs/oauth2/.idea
+pkgs/.DS_Store

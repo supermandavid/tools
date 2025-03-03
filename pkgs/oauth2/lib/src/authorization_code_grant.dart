@@ -279,7 +279,7 @@ class AuthorizationCodeGrant {
   /// responses while retrieving credentials.
   ///
   /// Throws [AuthorizationException] if the authorization fails.
-  Future<Client> handleAuthorizationCode(String authorizationCode) async {
+  Future<Client> handleAuthorizationCode(String authorizationCode, {Map<String, String>? bodyParameters}) async {
     if (_state == _State.initial) {
       throw StateError('The authorization URL has not yet been generated.');
     } else if (_state == _State.finished) {
@@ -287,12 +287,12 @@ class AuthorizationCodeGrant {
     }
     _state = _State.finished;
 
-    return _handleAuthorizationCode(authorizationCode);
+    return _handleAuthorizationCode(authorizationCode, bodyParameters: bodyParameters);
   }
 
   /// This works just like [handleAuthorizationCode], except it doesn't validate
   /// the state beforehand.
-  Future<Client> _handleAuthorizationCode(String? authorizationCode) async {
+  Future<Client> _handleAuthorizationCode(String? authorizationCode, {Map<String, String>? bodyParameters}) async {
     var startTime = DateTime.now();
 
     var headers = <String, String>{};
@@ -314,12 +314,23 @@ class AuthorizationCodeGrant {
       if (secret != null) body['client_secret'] = secret;
     }
 
+    // Appending the custombody parameters if it is provided
+    body.addAll(bodyParameters ?? {});
+
+
     var response =
         await _httpClient!.post(tokenEndpoint, headers: headers, body: body);
+
+    print("the body data is: ${body}");
+
+    print("the response data is: ${response.body}");
 
     var credentials = handleAccessTokenResponse(
         response, tokenEndpoint, startTime, _scopes, _delimiter,
         getParameters: _getParameters);
+
+    print("the credentials Data" + credentials.data.toString());
+
     return Client(credentials,
         identifier: identifier,
         secret: secret,

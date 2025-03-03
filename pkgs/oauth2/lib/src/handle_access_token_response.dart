@@ -106,6 +106,7 @@ Credentials handleAccessTokenResponse(http.Response response, Uri tokenEndpoint,
       tokenEndpoint: tokenEndpoint,
       scopes: scopes,
       expiration: expiration,
+      data: parameters
     );
   } on FormatException catch (e) {
     throw FormatException('Invalid OAuth response for "$tokenEndpoint": '
